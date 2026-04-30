@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5000');
+const socket = io('https://intelligent-support-queue-system.onrender.com');
 
 function App() {
   const [queue, setQueue] = useState([]);
@@ -13,25 +13,25 @@ function App() {
     socket.on('queue_update', (data) => {
       setQueue(data);
     });
-    
+
     socket.on('agent_update', () => {
       fetchAgents();
     });
-    
+
     fetchAgents();
-    
+
     return () => {
       socket.off('queue_update');
       socket.off('agent_update');
     }
   }, []);
-  
+
   const fetchAgents = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/agents');
+      const res = await fetch('https://intelligent-support-queue-system.onrender.com/api/agents');
       const data = await res.json();
       setAgents(data);
-    } catch(e) {
+    } catch (e) {
       console.error(e);
     }
   };
@@ -39,21 +39,21 @@ function App() {
   const handleAddAgent = async (e) => {
     e.preventDefault();
     try {
-      await fetch('http://localhost:5000/api/agents', {
+      await fetch('https://intelligent-support-queue-system.onrender.com/api/agents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: newAgentName, specialization: newAgentSpec })
       });
       setNewAgentName('');
-    } catch(e) {
+    } catch (e) {
       console.error(e);
     }
   };
-  
+
   const handleAssign = (agentId, ticketId) => {
     socket.emit('assign_ticket', { agentId, ticketId });
   };
-  
+
   const handleResolve = (agentId) => {
     socket.emit('resolve_ticket', agentId);
   };
@@ -78,7 +78,7 @@ function App() {
           <div className="lg:col-span-1 space-y-6">
             <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700/50 shadow-xl">
               <h2 className="text-xl font-semibold mb-4 text-slate-200">Active Agents</h2>
-              
+
               <div className="space-y-4">
                 {agents.map(agent => (
                   <div key={agent._id} className="bg-slate-700/30 p-4 rounded-xl border border-slate-600/30 transition-all hover:bg-slate-700/50">
@@ -93,13 +93,13 @@ function App() {
                         {agent.isAvailable ? 'Available' : 'Busy'}
                       </span>
                     </div>
-                    
+
                     {!agent.isAvailable && agent.currentTicket && (
                       <div className="mt-3 p-3 bg-slate-800/80 rounded-lg text-sm">
                         <div className="text-slate-400 text-xs mb-1">Current Ticket:</div>
                         <div className="flex justify-between items-center">
-                          <span className="font-mono text-slate-300">{agent.currentTicket._id.substring(0,6)}...</span>
-                          <button 
+                          <span className="font-mono text-slate-300">{agent.currentTicket._id.substring(0, 6)}...</span>
+                          <button
                             onClick={() => handleResolve(agent._id)}
                             className="text-xs bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-300 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                           >
@@ -108,7 +108,7 @@ function App() {
                         </div>
                       </div>
                     )}
-                    
+
                     {agent.isAvailable && (
                       <div className="mt-3 border-t border-slate-600/30 pt-3">
                         <p className="text-xs text-slate-400 mb-2">Assign top priority ticket:</p>
@@ -119,7 +119,7 @@ function App() {
                               onClick={() => handleAssign(agent._id, ticket._id)}
                               className="text-xs bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
                             >
-                              Take {ticket._id.substring(0,4)}
+                              Take {ticket._id.substring(0, 4)}
                             </button>
                           ))}
                           {queue.filter(t => t.type === agent.specialization).length === 0 && (
@@ -130,7 +130,7 @@ function App() {
                     )}
                   </div>
                 ))}
-                
+
                 {agents.length === 0 && (
                   <div className="text-center p-4 text-slate-500 text-sm">No agents registered</div>
                 )}
@@ -142,9 +142,9 @@ function App() {
               <form onSubmit={handleAddAgent} className="space-y-4">
                 <div>
                   <label className="block text-sm text-slate-400 mb-1">Name</label>
-                  <input 
+                  <input
                     required
-                    type="text" 
+                    type="text"
                     value={newAgentName}
                     onChange={e => setNewAgentName(e.target.value)}
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors text-white placeholder-slate-500"
@@ -153,7 +153,7 @@ function App() {
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1">Specialization</label>
-                  <select 
+                  <select
                     value={newAgentSpec}
                     onChange={e => setNewAgentSpec(e.target.value)}
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500 transition-colors text-white"
@@ -177,27 +177,25 @@ function App() {
                   {queue.length} Waiting
                 </span>
               </div>
-              
+
               <div className="space-y-3">
                 {queue.map((ticket, index) => (
-                  <div 
-                    key={ticket._id} 
+                  <div
+                    key={ticket._id}
                     className="flex items-center justify-between p-4 bg-slate-900/50 rounded-xl border border-slate-700/50 hover:border-slate-600 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg ${
-                        index === 0 ? 'bg-amber-500 text-amber-950 shadow-amber-500/20' : 
-                        index < 3 ? 'bg-blue-500 text-blue-950 shadow-blue-500/20' : 
-                        'bg-slate-700 text-slate-300'
-                      }`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg ${index === 0 ? 'bg-amber-500 text-amber-950 shadow-amber-500/20' :
+                        index < 3 ? 'bg-blue-500 text-blue-950 shadow-blue-500/20' :
+                          'bg-slate-700 text-slate-300'
+                        }`}>
                         #{index + 1}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-mono text-sm text-slate-300">{ticket._id}</span>
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold ${
-                            ticket.type === 'Billing' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'
-                          }`}>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold ${ticket.type === 'Billing' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'
+                            }`}>
                             {ticket.type}
                           </span>
                         </div>
@@ -208,7 +206,7 @@ function App() {
                         </div>
                       </div>
                     </div>
-                    
+
                     <div className="flex gap-4 items-center text-right">
                       <div className="hidden sm:block">
                         <div className="text-xs text-slate-400">Priority Score</div>
@@ -223,7 +221,7 @@ function App() {
                     </div>
                   </div>
                 ))}
-                
+
                 {queue.length === 0 && (
                   <div className="text-center p-12 bg-slate-900/30 rounded-xl border border-dashed border-slate-700 flex flex-col items-center justify-center">
                     <div className="text-4xl mb-4">🎉</div>
@@ -234,7 +232,7 @@ function App() {
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>
