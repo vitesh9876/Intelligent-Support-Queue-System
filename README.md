@@ -1,63 +1,84 @@
-# Intelligent Support Queue System
+# 🚀 Intelligent Support Queue System
 
-A complete MERN stack application featuring a real-time priority queue for customer support, built for the Agumentik Internship Task.
+A real-time, priority-based MERN stack application designed for high-efficiency customer support management. This project features dynamic ticket routing, displacement-based priority boosting, and automated inactivity handling.
 
-## Project Structure
-The repository is divided into three core modules:
+---
 
-1. **`backend/`**
-   - Node.js & Express server
-   - In-Memory MongoDB (Zero-configuration required)
-   - Socket.io for real-time bidirectional communication
-   - Calculates dynamic wait-time priorities and displacement counts.
+## 🔗 Live Deployment Links
 
-2. **`admin-web/`**
-   - React + Vite + Tailwind CSS v4
-   - Real-time Admin Dashboard
-   - Allows agents to take tickets from the queue based on specializations.
+| Component | URL | Status |
+| :--- | :--- | :--- |
+| **Admin Dashboard** | [https://intelligent-support-queue-system.netlify.app](https://intelligent-support-queue-system.netlify.app) | 🟢 Live |
+| **Backend API** | [https://intelligent-support-queue-system.onrender.com](https://intelligent-support-queue-system.onrender.com) | 🟢 Live |
+| **Customer App** | *Generate APK via EAS for Mobile* | 🟢 Ready |
 
-3. **`customer-mobile/`**
-   - React Native (Bare Workflow ready)
-   - Real-time customer facing application.
-   - Heartbeat inactivity detection to remove idle users.
+---
 
-## Running Locally
+## ✨ Key Features
 
-### Backend
+- **⚡ Real-Time Updates:** Powered by Socket.io for instantaneous queue status updates across all platforms.
+- **📈 Dynamic Priority Logic:** Tickets gain priority over time (0.5 score/min). 
+- **🛡️ Displacement Protection:** Low-priority tickets that are "skipped" 3 times are automatically boosted to the top of the queue.
+- **🤖 Specialized Routing:** Automated matching of tickets (Billing/Technical) to agents with corresponding specializations.
+- **⏱️ Inactivity Watchdog:** Customers are automatically removed from the queue if no heartbeat is detected for 2 minutes.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React, Vite, Tailwind CSS v4
+- **Mobile:** React Native (Expo Bare Workflow)
+- **Backend:** Node.js, Express, Socket.io
+- **Database:** MongoDB (using `mongodb-memory-server` for zero-config testing)
+
+---
+
+## 🚀 Getting Started Locally
+
+### 1. Backend
 ```bash
 cd backend
 npm install
-node server.js
+npm start
 ```
-The backend will automatically start an In-Memory MongoDB instance and run on `http://localhost:5000`.
+*Runs on `http://localhost:5000`*
 
-### Admin Dashboard
+### 2. Admin Dashboard
 ```bash
 cd admin-web
 npm install
 npm run dev
 ```
-Open `http://localhost:5173`.
+*Runs on `http://localhost:5173`*
 
-### Customer App
+### 3. Customer Mobile App
 ```bash
 cd customer-mobile
 npm install
-npx expo start -c
+npx expo start
 ```
-Press `w` to open in browser, or open in Android emulator.
 
-## Building the APK (Bare React Native)
-To convert the Expo project into a raw, native Android project (Bare Workflow) and generate an APK without Expo's cloud services:
+---
 
-1. Eject to a bare React Native project:
-```bash
-cd customer-mobile
-npx expo prebuild --clean
-```
-2. Build the APK using Android Studio, or via command line:
-```bash
-cd android
-./gradlew assembleRelease
-```
-The APK will be generated at `android/app/build/outputs/apk/release/app-release.apk`.
+## 📦 Building the APK
+
+To generate a standalone Android APK for the customer application:
+
+1. Ensure you have the [Expo CLI](https://docs.expo.dev/get-started/installation/) installed.
+2. Run the build command:
+   ```bash
+   cd customer-mobile
+   eas build -p android --profile preview
+   ```
+3. Download the generated `.apk` from the provided Expo link.
+
+---
+
+## 📁 Project Structure
+
+- `backend/`: Express server logic, Socket.io handlers, and Mongoose models.
+- `admin-web/`: React-based dashboard for agents and administrators.
+- `customer-mobile/`: React Native application for customer queue entry and monitoring.
+
+---
+**Developed for the Agumentik Internship Task.**
